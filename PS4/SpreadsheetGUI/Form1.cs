@@ -328,5 +328,161 @@ namespace SpreadsheetGUI
                 spreadsheetPanel1.SetValue(column, row, value);
             }
         }
+
+        /// <summary>
+        /// Updates the frame at 30 frames per second per the frame timer.
+        /// *** DO WE NEED TO REGISTER THIS EVENT? ***
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void UpdateFrame(object sender, EventArgs e)
+        {
+            // Update GUI based on changes made by server from previous frame
+        }
+
+        /// <summary>
+        /// Event handler for when the connect button is clicked in the GUI.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ConnectButton_Click(object sender, EventArgs e)
+        {
+            if (!UsernameTextBox.Text.Equals("") && !IPTextBox.Text.Equals(""))
+            {
+                UsernameTextBox.Enabled = false;
+                IPTextBox.Enabled = false;
+                ConnectButton.Enabled = false;
+
+                //Begin server connection work
+                //worker.RunWorkerAsync();
+            }
+            else
+            {
+                MessageBox.Show("You must enter a server name and a player name to connect.");
+            }
+        }
+
+        private void IPLabel_Click(object sender, EventArgs e)
+        {
+            IPTextBox.Focus();
+        }
+
+        private void UsernameLabel_Click(object sender, EventArgs e)
+        {
+            UsernameTextBox.Focus();
+        }
+
+        private void IPTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UsernameTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        // SERVER CONNECTION WORK BEGINS HERE
+
+        /// <summary>
+        /// Initial handshake with the server
+        /// </summary>
+        /// <param name="state"></param>
+        public void FirstContact(SocketState state)
+        {
+            state.callMe = ReceiveStartup;
+            StaticNetworking.Send(state.Socket, UsernameTextBox.Text);
+        }
+
+        /// <summary>
+        /// Receive the startup information from the server and process.
+        /// </summary>
+        /// <param name="state"></param>
+        public void ReceiveStartup(SocketState state)
+        {
+            state.callMe = ReceiveSpreadsheet;
+            StaticNetworking.GetData(state);
+
+            // Retrieve string message from state
+            //string[] s =
+            //Byte[] b = state.MessageBuffer;
+
+            // Lock the spreadsheet while data processes
+            // Process startup data
+
+            // Clear the stringbuilder for the next round of messages from the server
+        }
+
+        /// <summary>
+        /// Receive the "world" (Spreadsheet) state from the server and process updated state.
+        /// </summary>
+        /// <param name="state"></param>
+        public void ReceiveSpreadsheet(SocketState state)
+        {
+            state.callMe = ReceiveSpreadsheet;
+            StaticNetworking.GetData(state);
+
+            // Retrieve string message from state
+            //string[] s =
+            //Byte[] b = state.MessageBuffer;
+
+            // Lock the spreadsheet while data processes
+                // Process data
+            
+            // Clear the stringbuilder for the next round of messages from the server
+        }
+
+        /// <summary>
+        /// For the initial server handshake, process the "world" (Spreadsheet) state into a new spreadsheet
+        /// </summary>
+        public void ProcessStartupData(string[] spreadsheet, Byte[] data)
+        {
+            MemoryStream stream = new MemoryStream(data);
+            StreamReader reader = new StreamReader(stream);
+
+            // Begin reading the data stream
+            using (reader)
+            {
+                try
+                {
+                    string line;
+                    while (reader.Peek() >= 0)
+                    {
+                        line = reader.ReadLine();
+                    }
+
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Recurring action for drawing new data from the server.
+        /// </summary>
+        public void ProcessData(string[] spreadsheet, Byte[] data)
+        {
+            MemoryStream stream = new MemoryStream(data);
+            StreamReader reader = new StreamReader(stream);
+
+            // Begin reading the data stream
+            using (reader)
+            {
+                try
+                {
+                    string line;
+                    while (reader.Peek() >= 0)
+                    {
+                        line = reader.ReadLine();
+                    }
+
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
     }
 }

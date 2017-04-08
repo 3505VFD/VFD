@@ -46,6 +46,11 @@
             this.ContentChangeButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.UsernameLabel = new System.Windows.Forms.Label();
+            this.IPLabel = new System.Windows.Forms.Label();
+            this.UsernameTextBox = new System.Windows.Forms.TextBox();
+            this.IPTextBox = new System.Windows.Forms.TextBox();
+            this.ConnectButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -162,7 +167,6 @@
             this.CellContentTextBox.Name = "CellContentTextBox";
             this.CellContentTextBox.Size = new System.Drawing.Size(204, 23);
             this.CellContentTextBox.TabIndex = 6;
-            this.CellContentTextBox.KeyPress += KeyPressHandler;
             // 
             // InputLabel
             // 
@@ -204,11 +208,62 @@
             // 
             this.saveFileDialog1.DefaultExt = "sprd";
             // 
+            // UsernameLabel
+            // 
+            this.UsernameLabel.AutoSize = true;
+            this.UsernameLabel.Location = new System.Drawing.Point(92, 7);
+            this.UsernameLabel.Name = "UsernameLabel";
+            this.UsernameLabel.Size = new System.Drawing.Size(58, 13);
+            this.UsernameLabel.TabIndex = 9;
+            this.UsernameLabel.Text = "Username:";
+            this.UsernameLabel.Click += new System.EventHandler(this.UsernameLabel_Click);
+            // 
+            // IPLabel
+            // 
+            this.IPLabel.AutoSize = true;
+            this.IPLabel.Location = new System.Drawing.Point(259, 5);
+            this.IPLabel.Name = "IPLabel";
+            this.IPLabel.Size = new System.Drawing.Size(20, 13);
+            this.IPLabel.TabIndex = 10;
+            this.IPLabel.Text = "IP:";
+            this.IPLabel.Click += new System.EventHandler(this.IPLabel_Click);
+            // 
+            // UsernameTextBox
+            // 
+            this.UsernameTextBox.Location = new System.Drawing.Point(153, 2);
+            this.UsernameTextBox.Name = "UsernameTextBox";
+            this.UsernameTextBox.Size = new System.Drawing.Size(100, 20);
+            this.UsernameTextBox.TabIndex = 11;
+            this.UsernameTextBox.TextChanged += new System.EventHandler(this.UsernameTextBox_TextChanged);
+            // 
+            // IPTextBox
+            // 
+            this.IPTextBox.Location = new System.Drawing.Point(282, 2);
+            this.IPTextBox.Name = "IPTextBox";
+            this.IPTextBox.Size = new System.Drawing.Size(100, 20);
+            this.IPTextBox.TabIndex = 12;
+            this.IPTextBox.TextChanged += new System.EventHandler(this.IPTextBox_TextChanged);
+            // 
+            // ConnectButton
+            // 
+            this.ConnectButton.Location = new System.Drawing.Point(388, 2);
+            this.ConnectButton.Name = "ConnectButton";
+            this.ConnectButton.Size = new System.Drawing.Size(74, 22);
+            this.ConnectButton.TabIndex = 13;
+            this.ConnectButton.Text = "Connect";
+            this.ConnectButton.UseVisualStyleBackColor = true;
+            this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(525, 451);
+            this.Controls.Add(this.ConnectButton);
+            this.Controls.Add(this.IPTextBox);
+            this.Controls.Add(this.UsernameTextBox);
+            this.Controls.Add(this.IPLabel);
+            this.Controls.Add(this.UsernameLabel);
             this.Controls.Add(this.ContentChangeButton);
             this.Controls.Add(this.ValueLabel);
             this.Controls.Add(this.InputLabel);
@@ -225,6 +280,7 @@
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -247,6 +303,11 @@
         private System.Windows.Forms.Button ContentChangeButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Label UsernameLabel;
+        private System.Windows.Forms.Label IPLabel;
+        private System.Windows.Forms.TextBox UsernameTextBox;
+        private System.Windows.Forms.TextBox IPTextBox;
+        private System.Windows.Forms.Button ConnectButton;
     }
 }
 
