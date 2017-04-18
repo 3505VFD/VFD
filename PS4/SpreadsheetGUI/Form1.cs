@@ -23,7 +23,8 @@ namespace SpreadsheetGUI
         private string content;
         private string value;
         private string cellName;
-
+        private BackgroundWorker worker;
+        SocketState spreadsheetState;
         Spreadsheet ss;
 
         public Form1()
@@ -31,6 +32,16 @@ namespace SpreadsheetGUI
             InitializeComponent();
             this.FormClosing += Form1_Closing;
             ss = new Spreadsheet(s => true, s => s.ToUpper(), "ps6");
+
+            worker = new BackgroundWorker();
+            worker.DoWork += new DoWorkEventHandler(DoWork);
+            
+        }
+
+        private void DoWork(object sender, DoWorkEventArgs e)
+        {
+            //Connect to the server
+            StaticNetworking.ConnectToServer(FirstContact, IPTextBox.Text);
         }
 
         /// <summary>
@@ -330,14 +341,14 @@ namespace SpreadsheetGUI
         }
 
         /// <summary>
-        /// Updates the frame at 30 frames per second per the frame timer.
+        /// Updates the GUI whenever messages from the server comes in.
         /// *** DO WE NEED TO REGISTER THIS EVENT? ***
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void UpdateFrame(object sender, EventArgs e)
         {
-            // Update GUI based on changes made by server from previous frame
+            // Update GUI based on changes made by server from previous message
         }
 
         /// <summary>
@@ -354,7 +365,7 @@ namespace SpreadsheetGUI
                 ConnectButton.Enabled = false;
 
                 //Begin server connection work
-                //worker.RunWorkerAsync();
+                worker.RunWorkerAsync();
             }
             else
             {
@@ -391,7 +402,7 @@ namespace SpreadsheetGUI
         public void FirstContact(SocketState state)
         {
             state.callMe = ReceiveStartup;
-            StaticNetworking.Send(state.Socket, UsernameTextBox.Text);
+            StaticNetworking.Send(state.Socket, UsernameTextBox.Text + "\n");
         }
 
         /// <summary>
@@ -402,6 +413,7 @@ namespace SpreadsheetGUI
         {
             state.callMe = ReceiveSpreadsheet;
             StaticNetworking.GetData(state);
+            spreadsheetState = state;
 
             // Retrieve string message from state
             //string[] s =

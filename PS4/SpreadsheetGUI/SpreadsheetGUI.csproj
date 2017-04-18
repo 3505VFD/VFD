@@ -87,6 +87,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Networking\Networking.csproj">
+      <Project>{e2e6a20b-d753-4120-9939-ba50007e997b}</Project>
+      <Name>Networking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Spreadsheet\Spreadsheet.csproj">
       <Project>{872022F1-2377-4C1B-B841-0B0A2DB69FF1}</Project>
       <Name>Spreadsheet</Name>
