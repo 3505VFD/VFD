@@ -2,29 +2,44 @@
 //Save string in a txt file.
 
 #include <stdlib.h>
-#include <string>
 #include <iostream>
+#include <fstream>
+#include <string>
 
-const void Storage(std::string cellEdit)
+using namespace std;
+
+const void storage(string json, string filename)
 {
-    //“a1\t“79”\t14\n
-    //Separate the stuff.
-     std::size_t found = cellEdit.find("\t");
-     std::size_t next = cellEdit.find("\t", found+1,1);
-     std::size_t end = cellEdit.find("\n");
-     
-     //Collect the data.
-     std::string cell = cellEdit.substr(0,found);
-     std::cout << cell << std::endl;
-     
-     std::string value = cellEdit.substr(found+1,next-found);
-     std::cout << value << std::endl;
-     
-     std::string version = cellEdit.substr(next+1,end-next);
-     std::cout << version << std::endl;
+  ofstream file(filename.c_str());
+  if (file.is_open())
+  {
+    file << json;
+    file.close();
+  }
+  else cout << "Unable to open file";
+}
+
+const string readStorage(string filename)
+{
+  string line;
+  //must .c_str to convert the string to a char
+  ifstream myfile(filename.c_str());
+  if (myfile.is_open())
+  {
+    while ( getline(myfile,line) )
+    {
+      cout << line << '\n';
+    }
+    
+    myfile.close();
+  }
+  else cout << "Unable to open file";
+  
+  return line;
 }
 
 int main(int argc, char** argv)
 {
-    Storage("a1\t79\t14\n");
+    storage("{“a1”:”value”, “b2”:”89”, “c5”:”=b2+4”, “version”:”13”}\n", "example.txt");
+    readStorage("example.txt");
 }
