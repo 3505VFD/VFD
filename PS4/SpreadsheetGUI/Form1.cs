@@ -131,25 +131,7 @@ namespace SpreadsheetGUI
 
         private void KeyPressHandler(object sender, KeyPressEventArgs e)
         {
-            //If the enter key is pressed
-            if (e.KeyChar == (char)Keys.Return)
-            {
-                content = CellContentTextBox.Text;
-                ISet<string> cellsToUpdate = ss.SetContentsOfCell(cellName, content);
-                ss.SetContentsOfCell(cellName, content);
-                value = ss.GetCellValue(cellName).ToString();
-                spreadsheetPanel1.SetValue(column, row, value);
-                CellValueTextBox.Text = value;
 
-                if (ss.Changed == true)
-                {
-                    if (!this.Text.Contains("*"))
-                        this.Text = this.Text + "*";
-                }
-
-                //Update cell views based on dependencies
-                UpdateCellsWithCorrectValue(cellsToUpdate);
-            }
         }
 
         private void newSpreadsheetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -411,45 +393,72 @@ namespace SpreadsheetGUI
         /// <param name="state"></param>
         public void ReceiveStartup(SocketState state)
         {
-            state.callMe = ReceiveSpreadsheet;
+            state.callMe = ReceiveInitialSpreadsheet;
             StaticNetworking.GetData(state);
             spreadsheetState = state;
 
             // Retrieve string message from state
-            //string[] s =
-            //Byte[] b = state.MessageBuffer;
+            Byte[] b = state.MessageBuffer;
+            string[] s = state.SB.ToString().Split('\t');
 
             // Lock the spreadsheet while data processes
-            // Process startup data
+            lock (spreadsheetState)
+            {
+                // Process startup data for requesting file from server
+                openOrCreateFile(b, s);
+            }
 
             // Clear the stringbuilder for the next round of messages from the server
+            spreadsheetState.SB.Clear();
+        }
+
+        private void openOrCreateFile(Byte[] b, string[] s)
+        {/*
+            MemoryStream stream = new MemoryStream(b);
+            StreamReader reader = new StreamReader(stream);
+
+            using (reader)
+            {
+                string line;
+                while (reader.Peek() >= 0)
+                {
+                    try
+                    {
+                        line = reader.ReadLine();
+                        NetworkInfoLabel.Text = NetworkInfoLabel.Text + line; 
+                    }
+                    catch (Exception)
+                    {}
+                }
+            } */
+
+            for(int i = 0; i < s.Length; i++)
+            {
+                NetworkInfoLabel.Text = NetworkInfoLabel.Text + s[i];
+            }
         }
 
         /// <summary>
-        /// Receive the "world" (Spreadsheet) state from the server and process updated state.
+        /// Receive the initial version of the loaded or new "world" (spreadsheet)
         /// </summary>
         /// <param name="state"></param>
-        public void ReceiveSpreadsheet(SocketState state)
+        public void ReceiveInitialSpreadsheet(SocketState state)
         {
-            state.callMe = ReceiveSpreadsheet;
-            StaticNetworking.GetData(state);
+            Byte[] b = state.MessageBuffer;
+            string[] s = state.SB.ToString().Split('\t');
 
-            // Retrieve string message from state
-            //string[] s =
-            //Byte[] b = state.MessageBuffer;
+            lock(spreadsheetState)
+            {
+                ProcessSpreadsheetLoad(b, s);
+            }
 
-            // Lock the spreadsheet while data processes
-                // Process data
-            
-            // Clear the stringbuilder for the next round of messages from the server
+            // Clear stringbuilder for next time through so no repeated data is processed
+            spreadsheetState.SB.Clear();
         }
 
-        /// <summary>
-        /// For the initial server handshake, process the "world" (Spreadsheet) state into a new spreadsheet
-        /// </summary>
-        public void ProcessStartupData(string[] spreadsheet, Byte[] data)
+        public void ProcessSpreadsheetLoad(Byte[] b, string[] s)
         {
-            MemoryStream stream = new MemoryStream(data);
+            MemoryStream stream = new MemoryStream(b);
             StreamReader reader = new StreamReader(stream);
 
             // Begin reading the data stream
@@ -469,6 +478,25 @@ namespace SpreadsheetGUI
 
                 }
             }
+        }
+
+        /// <summary>
+        /// Receive the updates to the state from the server and process updates.
+        /// </summary>
+        /// <param name="state"></param>
+        public void ReceiveSpreadsheetUpdates(SocketState state)
+        {
+            state.callMe = ReceiveSpreadsheetUpdates;
+            StaticNetworking.GetData(state);
+
+            // Retrieve string message from state
+            //string[] s = state.SB.ToString().Split('\n');
+            //Byte[] b = state.MessageBuffer;
+
+            // Lock the spreadsheet while data processes
+            // Process data
+
+            // Clear the stringbuilder for the next round of messages from the server
         }
 
         /// <summary>
@@ -496,5 +524,13 @@ namespace SpreadsheetGUI
             }
         }
 
+        private void InputEnterButton_Click(object sender, EventArgs e)
+        {
+            // Send the filename to the server that the user requests
+            if (NetworkInputLabel.Text.Length < 1)
+            {
+                StaticNetworking.Send(spreadsheetState.Socket, NetworkInputLabel.Text + "\n");
+            }
+        }
     }
 }
