@@ -1,4 +1,5 @@
-﻿using SpreadsheetUtilities;
+﻿using Newtonsoft.Json;
+using SpreadsheetUtilities;
 using SS;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace SpreadsheetGUI
         private string content;
         private string value;
         private string cellName;
+
         private BackgroundWorker worker;
         SocketState spreadsheetState;
         Spreadsheet ss;
@@ -35,7 +37,12 @@ namespace SpreadsheetGUI
 
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(DoWork);
-            
+
+            // This timer simulates updates coming from the server
+            Timer frameTimer = new Timer();
+            frameTimer.Interval = 33;
+            frameTimer.Tick += UpdateFrame;
+            frameTimer.Start();
         }
 
         private void DoWork(object sender, DoWorkEventArgs e)
@@ -129,9 +136,15 @@ namespace SpreadsheetGUI
             UpdateCellsWithCorrectValue(cellsToUpdate);
         }
 
+        /// <summary>
+        /// Handles the enter button being pressed when there is text in the input
+        /// box for opening a file or creating new spreadsheet.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void KeyPressHandler(object sender, KeyPressEventArgs e)
         {
-
+            throw new NotImplementedException();
         }
 
         private void newSpreadsheetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -331,6 +344,7 @@ namespace SpreadsheetGUI
         public void UpdateFrame(object sender, EventArgs e)
         {
             // Update GUI based on changes made by server from previous message
+            ContentChangeButton_Click(sender, e);
         }
 
         /// <summary>
@@ -409,7 +423,7 @@ namespace SpreadsheetGUI
             }
 
             // Clear the stringbuilder for the next round of messages from the server
-            spreadsheetState.SB.Clear();
+            state.SB.Clear();
         }
 
         private void openOrCreateFile(Byte[] b, string[] s)
@@ -446,6 +460,7 @@ namespace SpreadsheetGUI
         {
             Byte[] b = state.MessageBuffer;
             string[] s = state.SB.ToString().Split('\t');
+            spreadsheetState = state;
 
             lock(spreadsheetState)
             {
@@ -453,29 +468,43 @@ namespace SpreadsheetGUI
             }
 
             // Clear stringbuilder for next time through so no repeated data is processed
-            spreadsheetState.SB.Clear();
+            state.SB.Clear();
+            state.callMe = ReceiveSpreadsheetUpdates;
         }
 
         public void ProcessSpreadsheetLoad(Byte[] b, string[] s)
         {
             MemoryStream stream = new MemoryStream(b);
             StreamReader reader = new StreamReader(stream);
+            Dictionary<string, string> spreadsheetData = new Dictionary<string, string>();
 
             // Begin reading the data stream
             using (reader)
             {
                 try
                 {
-                    string line;
-                    while (reader.Peek() >= 0)
-                    {
-                        line = reader.ReadLine();
-                    }
+                    // Get the json data for the whole spreadsheet file
+                    string jsonString = reader.ReadToEnd();
 
+                    // Deserialize the json string into a Dictionary
+                    spreadsheetData = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
                 }
-                catch (Exception e)
-                {
+                catch (JsonReaderException)
+                {}
+            }
 
+            // Iterate through the deserialized JsonString data and 
+            // set the data appropriately within the representation of the
+            // spreadsheet within the form.
+            foreach (string cell in spreadsheetData.Keys)
+            {
+                if(cell.Equals("version"))
+                {
+                    ss.SetVersion(spreadsheetData[cell]);
+                }
+                else
+                {
+                    ss.SetContentsOfCell(cell, spreadsheetData[cell]);
                 }
             }
         }
@@ -502,7 +531,7 @@ namespace SpreadsheetGUI
         /// <summary>
         /// Recurring action for drawing new data from the server.
         /// </summary>
-        public void ProcessData(string[] spreadsheet, Byte[] data)
+        public void ProcessUpdates(string[] spreadsheet, Byte[] data)
         {
             MemoryStream stream = new MemoryStream(data);
             StreamReader reader = new StreamReader(stream);
