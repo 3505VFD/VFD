@@ -6,13 +6,14 @@ using System.Threading.Tasks;
 using SpreadsheetUtilities;
 using System.Xml;
 using System.IO;
-
+using Newtonsoft.Json;
 
 namespace SS
 {
     public class Spreadsheet : AbstractSpreadsheet
     {
         private Dictionary<string, object> ss; //The Spreadsheet containing cells and their contents, which can be a string, double or Formula.
+
         private DependencyGraph d; //Storage for dependencies        
         private string f; //File path
         private bool changed;
@@ -506,6 +507,24 @@ namespace SS
             if (values.TryGetValue(s, out o) == true && values[s].GetType() == typeof(double))
                 return (double)values[s];
             return 0;
+        }
+
+        /// <summary>
+        /// Getter for the verison of the spreadsheet.
+        /// </summary>
+        /// <returns></returns>
+        public string GetVersion()
+        {
+            return Version;
+        }
+
+        /// <summary>
+        /// Setter for the version of the spreadsheet.
+        /// </summary>
+        /// <param name="_Version"></param>
+        public void SetVersion(string _Version)
+        {
+            Version = _Version;
         }
     }
 }

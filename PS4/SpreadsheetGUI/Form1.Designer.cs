@@ -51,6 +51,11 @@
             this.UsernameTextBox = new System.Windows.Forms.TextBox();
             this.IPTextBox = new System.Windows.Forms.TextBox();
             this.ConnectButton = new System.Windows.Forms.Button();
+            this.NetworkInfoLabel = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.NetworkInputLabel = new System.Windows.Forms.Label();
+            this.InputEnterButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -61,7 +66,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(525, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(781, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -254,11 +259,60 @@
             this.ConnectButton.UseVisualStyleBackColor = true;
             this.ConnectButton.Click += new System.EventHandler(this.ConnectButton_Click);
             // 
+            // NetworkInfoLabel
+            // 
+            this.NetworkInfoLabel.AutoSize = true;
+            this.NetworkInfoLabel.Location = new System.Drawing.Point(531, 50);
+            this.NetworkInfoLabel.Name = "NetworkInfoLabel";
+            this.NetworkInfoLabel.Size = new System.Drawing.Size(105, 13);
+            this.NetworkInfoLabel.TabIndex = 15;
+            this.NetworkInfoLabel.Text = "Network Info Display";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(534, 67);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox1.Size = new System.Drawing.Size(225, 126);
+            this.textBox1.TabIndex = 16;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(534, 231);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(225, 20);
+            this.textBox2.TabIndex = 17;
+            // 
+            // NetworkInputLabel
+            // 
+            this.NetworkInputLabel.AutoSize = true;
+            this.NetworkInputLabel.Location = new System.Drawing.Point(534, 212);
+            this.NetworkInputLabel.Name = "NetworkInputLabel";
+            this.NetworkInputLabel.Size = new System.Drawing.Size(74, 13);
+            this.NetworkInputLabel.TabIndex = 18;
+            this.NetworkInputLabel.Text = "Network Input";
+            // 
+            // InputEnterButton
+            // 
+            this.InputEnterButton.Location = new System.Drawing.Point(534, 258);
+            this.InputEnterButton.Name = "InputEnterButton";
+            this.InputEnterButton.Size = new System.Drawing.Size(75, 23);
+            this.InputEnterButton.TabIndex = 19;
+            this.InputEnterButton.Text = "Enter";
+            this.InputEnterButton.UseVisualStyleBackColor = true;
+            this.InputEnterButton.Click += new System.EventHandler(this.InputEnterButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(525, 451);
+            this.ClientSize = new System.Drawing.Size(781, 451);
+            this.Controls.Add(this.InputEnterButton);
+            this.Controls.Add(this.NetworkInputLabel);
+            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.NetworkInfoLabel);
             this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.IPTextBox);
             this.Controls.Add(this.UsernameTextBox);
@@ -308,6 +362,11 @@
         private System.Windows.Forms.TextBox UsernameTextBox;
         private System.Windows.Forms.TextBox IPTextBox;
         private System.Windows.Forms.Button ConnectButton;
+        private System.Windows.Forms.Label NetworkInfoLabel;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label NetworkInputLabel;
+        private System.Windows.Forms.Button InputEnterButton;
     }
 }
 
