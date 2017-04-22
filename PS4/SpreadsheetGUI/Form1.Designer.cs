@@ -52,7 +52,7 @@
             this.IPTextBox = new System.Windows.Forms.TextBox();
             this.ConnectButton = new System.Windows.Forms.Button();
             this.NetworkInfoLabel = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.consoleTextBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.NetworkInputLabel = new System.Windows.Forms.Label();
             this.InputEnterButton = new System.Windows.Forms.Button();
@@ -268,14 +268,17 @@
             this.NetworkInfoLabel.TabIndex = 15;
             this.NetworkInfoLabel.Text = "Network Info Display";
             // 
-            // textBox1
+            // consoleTextBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(534, 67);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(225, 126);
-            this.textBox1.TabIndex = 16;
+            this.consoleTextBox1.BackColor = System.Drawing.SystemColors.WindowText;
+            this.consoleTextBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.consoleTextBox1.ForeColor = System.Drawing.SystemColors.Window;
+            this.consoleTextBox1.Location = new System.Drawing.Point(534, 67);
+            this.consoleTextBox1.Multiline = true;
+            this.consoleTextBox1.Name = "consoleTextBox1";
+            this.consoleTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.consoleTextBox1.Size = new System.Drawing.Size(225, 126);
+            this.consoleTextBox1.TabIndex = 16;
             // 
             // textBox2
             // 
@@ -311,7 +314,7 @@
             this.Controls.Add(this.InputEnterButton);
             this.Controls.Add(this.NetworkInputLabel);
             this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.consoleTextBox1);
             this.Controls.Add(this.NetworkInfoLabel);
             this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.IPTextBox);
@@ -363,7 +366,7 @@
         private System.Windows.Forms.TextBox IPTextBox;
         private System.Windows.Forms.Button ConnectButton;
         private System.Windows.Forms.Label NetworkInfoLabel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox consoleTextBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label NetworkInputLabel;
         private System.Windows.Forms.Button InputEnterButton;
