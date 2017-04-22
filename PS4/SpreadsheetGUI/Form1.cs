@@ -356,10 +356,14 @@ namespace SpreadsheetGUI
         {
             if (!UsernameTextBox.Text.Equals("") && !IPTextBox.Text.Equals(""))
             {
-                UsernameTextBox.Enabled = false;
-                IPTextBox.Enabled = false;
-                ConnectButton.Enabled = false;
-
+                UsernameTextBox.Enabled         = false;
+                IPTextBox.Enabled               = false;
+                ConnectButton.Enabled           = false;
+                spreadsheetPanel1.Enabled       = false;
+                networkInputTextbox.Enabled     = false;
+                fileToolStripMenuItem.Enabled   = false;
+                NetworkInputEnterButton.Enabled = false;
+                networkInfoTextBox1.Text = networkInfoTextBox1.Text + "Connecting to " + IPTextBox.Text + "\n";
                 //Begin server connection work
                 worker.RunWorkerAsync();
             }
@@ -398,6 +402,7 @@ namespace SpreadsheetGUI
         public void FirstContact(SocketState state)
         {
             state.callMe = ReceiveStartup;
+            networkInfoTextBox1.Text = networkInfoTextBox1.Text + "\nConnecting"; //Print to UI network console
             StaticNetworking.Send(state.Socket, UsernameTextBox.Text + "\n");
         }
 
@@ -427,7 +432,8 @@ namespace SpreadsheetGUI
         }
 
         private void openOrCreateFile(Byte[] b, string[] s)
-        {/*
+        {
+            /*
             MemoryStream stream = new MemoryStream(b);
             StreamReader reader = new StreamReader(stream);
 
@@ -448,7 +454,7 @@ namespace SpreadsheetGUI
 
             for(int i = 0; i < s.Length; i++)
             {
-                NetworkInfoLabel.Text = NetworkInfoLabel.Text + s[i];
+                networkInfoTextBox1.Text = networkInfoTextBox1.Text + s[i];
             }
         }
 
@@ -553,12 +559,18 @@ namespace SpreadsheetGUI
             }
         }
 
+        /// <summary>
+        /// Input button for sending messages to the server from the network text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InputEnterButton_Click(object sender, EventArgs e)
         {
             // Send the filename to the server that the user requests
-            if (NetworkInputLabel.Text.Length < 1)
+            if (networkInputTextbox.Text.Length < 1)
             {
-                StaticNetworking.Send(spreadsheetState.Socket, NetworkInputLabel.Text + "\n");
+                StaticNetworking.Send(spreadsheetState.Socket, networkInputTextbox.Text + "\n");
+                networkInfoTextBox1.Text ="\n" + networkInputTextbox.Text;
             }
         }
     }

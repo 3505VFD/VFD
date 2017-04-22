@@ -52,10 +52,10 @@
             this.IPTextBox = new System.Windows.Forms.TextBox();
             this.ConnectButton = new System.Windows.Forms.Button();
             this.NetworkInfoLabel = new System.Windows.Forms.Label();
-            this.consoleTextBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.networkInfoTextBox1 = new System.Windows.Forms.TextBox();
+            this.networkInputTextbox = new System.Windows.Forms.TextBox();
             this.NetworkInputLabel = new System.Windows.Forms.Label();
-            this.InputEnterButton = new System.Windows.Forms.Button();
+            this.NetworkInputEnterButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -268,53 +268,54 @@
             this.NetworkInfoLabel.TabIndex = 15;
             this.NetworkInfoLabel.Text = "Network Info Display";
             // 
-            // consoleTextBox1
+            // networkInfoTextBox1
             // 
-            this.consoleTextBox1.BackColor = System.Drawing.SystemColors.WindowText;
-            this.consoleTextBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.consoleTextBox1.ForeColor = System.Drawing.SystemColors.Window;
-            this.consoleTextBox1.Location = new System.Drawing.Point(534, 67);
-            this.consoleTextBox1.Multiline = true;
-            this.consoleTextBox1.Name = "consoleTextBox1";
-            this.consoleTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.consoleTextBox1.Size = new System.Drawing.Size(225, 126);
-            this.consoleTextBox1.TabIndex = 16;
+            this.networkInfoTextBox1.BackColor = System.Drawing.SystemColors.WindowText;
+            this.networkInfoTextBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.networkInfoTextBox1.ForeColor = System.Drawing.SystemColors.Window;
+            this.networkInfoTextBox1.Location = new System.Drawing.Point(537, 67);
+            this.networkInfoTextBox1.Multiline = true;
+            this.networkInfoTextBox1.Name = "networkInfoTextBox1";
+            this.networkInfoTextBox1.ReadOnly = true;
+            this.networkInfoTextBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.networkInfoTextBox1.Size = new System.Drawing.Size(225, 304);
+            this.networkInfoTextBox1.TabIndex = 16;
             // 
-            // textBox2
+            // networkInputTextbox
             // 
-            this.textBox2.Location = new System.Drawing.Point(534, 231);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(225, 20);
-            this.textBox2.TabIndex = 17;
+            this.networkInputTextbox.Location = new System.Drawing.Point(534, 390);
+            this.networkInputTextbox.Name = "networkInputTextbox";
+            this.networkInputTextbox.Size = new System.Drawing.Size(225, 20);
+            this.networkInputTextbox.TabIndex = 17;
             // 
             // NetworkInputLabel
             // 
             this.NetworkInputLabel.AutoSize = true;
-            this.NetworkInputLabel.Location = new System.Drawing.Point(534, 212);
+            this.NetworkInputLabel.Location = new System.Drawing.Point(531, 374);
             this.NetworkInputLabel.Name = "NetworkInputLabel";
             this.NetworkInputLabel.Size = new System.Drawing.Size(74, 13);
             this.NetworkInputLabel.TabIndex = 18;
             this.NetworkInputLabel.Text = "Network Input";
             // 
-            // InputEnterButton
+            // NetworkInputEnterButton
             // 
-            this.InputEnterButton.Location = new System.Drawing.Point(534, 258);
-            this.InputEnterButton.Name = "InputEnterButton";
-            this.InputEnterButton.Size = new System.Drawing.Size(75, 23);
-            this.InputEnterButton.TabIndex = 19;
-            this.InputEnterButton.Text = "Enter";
-            this.InputEnterButton.UseVisualStyleBackColor = true;
-            this.InputEnterButton.Click += new System.EventHandler(this.InputEnterButton_Click);
+            this.NetworkInputEnterButton.Location = new System.Drawing.Point(537, 416);
+            this.NetworkInputEnterButton.Name = "NetworkInputEnterButton";
+            this.NetworkInputEnterButton.Size = new System.Drawing.Size(75, 23);
+            this.NetworkInputEnterButton.TabIndex = 19;
+            this.NetworkInputEnterButton.Text = "Enter";
+            this.NetworkInputEnterButton.UseVisualStyleBackColor = true;
+            this.NetworkInputEnterButton.Click += new System.EventHandler(this.InputEnterButton_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(781, 451);
-            this.Controls.Add(this.InputEnterButton);
+            this.Controls.Add(this.NetworkInputEnterButton);
             this.Controls.Add(this.NetworkInputLabel);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.consoleTextBox1);
+            this.Controls.Add(this.networkInputTextbox);
+            this.Controls.Add(this.networkInfoTextBox1);
             this.Controls.Add(this.NetworkInfoLabel);
             this.Controls.Add(this.ConnectButton);
             this.Controls.Add(this.IPTextBox);
@@ -366,10 +367,10 @@
         private System.Windows.Forms.TextBox IPTextBox;
         private System.Windows.Forms.Button ConnectButton;
         private System.Windows.Forms.Label NetworkInfoLabel;
-        private System.Windows.Forms.TextBox consoleTextBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox networkInfoTextBox1;
+        private System.Windows.Forms.TextBox networkInputTextbox;
         private System.Windows.Forms.Label NetworkInputLabel;
-        private System.Windows.Forms.Button InputEnterButton;
+        private System.Windows.Forms.Button NetworkInputEnterButton;
     }
 }
 

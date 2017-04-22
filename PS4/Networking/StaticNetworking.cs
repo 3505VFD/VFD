@@ -88,9 +88,16 @@ namespace SpreadsheetGUI
         private static void ConnectedToServer(IAsyncResult ar)
         {
             SocketState state = (SocketState)ar.AsyncState;
-            state.Socket.EndConnect(ar);
-            state.callMe(state);
-            state.Socket.BeginReceive(state.MessageBuffer, 0, state.MessageBuffer.Length - 1, SocketFlags.None, ReceiveCallback, state);
+            try
+            {
+                state.Socket.EndConnect(ar);
+                state.callMe(state);
+                state.Socket.BeginReceive(state.MessageBuffer, 0, state.MessageBuffer.Length - 1, SocketFlags.None, ReceiveCallback, state);
+            }
+            catch(SocketException e)
+            {
+                Console.Out.WriteLine(e);
+            }            
         }
 
         /// <summary>
