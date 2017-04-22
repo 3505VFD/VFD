@@ -126,9 +126,8 @@
             // 
             // spreadsheetPanel1
             // 
-            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.spreadsheetPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.spreadsheetPanel1.Location = new System.Drawing.Point(0, 67);
             this.spreadsheetPanel1.Name = "spreadsheetPanel1";
             this.spreadsheetPanel1.Size = new System.Drawing.Size(525, 372);
@@ -270,6 +269,8 @@
             // 
             // networkInfoTextBox1
             // 
+            this.networkInfoTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.networkInfoTextBox1.BackColor = System.Drawing.SystemColors.WindowText;
             this.networkInfoTextBox1.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.networkInfoTextBox1.ForeColor = System.Drawing.SystemColors.Window;
@@ -283,6 +284,8 @@
             // 
             // networkInputTextbox
             // 
+            this.networkInputTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.networkInputTextbox.Location = new System.Drawing.Point(534, 390);
             this.networkInputTextbox.Name = "networkInputTextbox";
             this.networkInputTextbox.Size = new System.Drawing.Size(225, 20);
@@ -332,6 +335,7 @@
             this.Controls.Add(this.spreadsheetPanel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(797, 490);
             this.Name = "Form1";
             this.Text = "new1";
             this.menuStrip1.ResumeLayout(false);

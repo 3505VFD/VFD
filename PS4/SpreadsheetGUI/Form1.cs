@@ -26,6 +26,12 @@ namespace SpreadsheetGUI
         private string cellName;
 
         private BackgroundWorker worker;
+
+        // This delegate enables asynchronous calls for setting  
+        // the text property on a TextBox control.  
+        // Taken from https://msdn.microsoft.com/en-us/library/ms171728(v=vs.110).aspx?cs-save-lang=1&cs-lang=csharp#code-snippet-4
+        delegate void StringArgReturningVoidDelegate(Byte[] b, string[] s);
+
         SocketState spreadsheetState;
         Spreadsheet ss;
 
@@ -37,6 +43,7 @@ namespace SpreadsheetGUI
 
             worker = new BackgroundWorker();
             worker.DoWork += new DoWorkEventHandler(DoWork);
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_DoWorkComplete);
 
             // This timer simulates updates coming from the server
             Timer frameTimer = new Timer();
@@ -363,13 +370,13 @@ namespace SpreadsheetGUI
                 networkInputTextbox.Enabled     = false;
                 fileToolStripMenuItem.Enabled   = false;
                 NetworkInputEnterButton.Enabled = false;
-                networkInfoTextBox1.Text = networkInfoTextBox1.Text + "Connecting to " + IPTextBox.Text + "\n";
+                networkInfoTextBox1.Text = networkInfoTextBox1.Text + "Connecting to " + IPTextBox.Text + "\n\n";
                 //Begin server connection work
                 worker.RunWorkerAsync();
             }
             else
             {
-                MessageBox.Show("You must enter a server name and a player name to connect.");
+                MessageBox.Show("You must enter a server name and a user name to connect.");
             }
         }
 
@@ -402,7 +409,6 @@ namespace SpreadsheetGUI
         public void FirstContact(SocketState state)
         {
             state.callMe = ReceiveStartup;
-            networkInfoTextBox1.Text = networkInfoTextBox1.Text + "\nConnecting"; //Print to UI network console
             StaticNetworking.Send(state.Socket, UsernameTextBox.Text + "\n");
         }
 
@@ -454,8 +460,16 @@ namespace SpreadsheetGUI
 
             for(int i = 0; i < s.Length; i++)
             {
-                networkInfoTextBox1.Text = networkInfoTextBox1.Text + s[i];
+                if (networkInfoTextBox1.InvokeRequired)
+                {
+                    StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(openOrCreateFile);
+                    Invoke(d, new object[] { networkInfoTextBox1.Text + s[i] + "\n" });
+                }
+                else
+                    networkInfoTextBox1.Text = networkInfoTextBox1.Text + s[i] + "\n";
             }
+
+            
         }
 
         /// <summary>
@@ -572,6 +586,21 @@ namespace SpreadsheetGUI
                 StaticNetworking.Send(spreadsheetState.Socket, networkInputTextbox.Text + "\n");
                 networkInfoTextBox1.Text ="\n" + networkInputTextbox.Text;
             }
+        }
+
+        /// <summary>
+        /// For when the background worker is done with its work.
+        /// </summary>
+        private void worker_DoWorkComplete(object sender, RunWorkerCompletedEventArgs e)
+        {
+            UsernameTextBox.Enabled         = true;
+            IPTextBox.Enabled               = true;
+            ConnectButton.Enabled           = true;
+            spreadsheetPanel1.Enabled       = true;
+            networkInputTextbox.Enabled     = true;
+            fileToolStripMenuItem.Enabled   = true;
+            NetworkInputEnterButton.Enabled = true;
+            networkInfoTextBox1.Text = networkInfoTextBox1.Text + "Successful Connection by " + UsernameTextBox.Text + " to " + IPTextBox.Text + "\n";
         }
     }
 }
