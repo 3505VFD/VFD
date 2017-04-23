@@ -1,139 +1,97 @@
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/bind.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/asio.hpp>
-
-using boost::property_tree::ptree;
-using boost::property_tree::read_json;
-using boost::property_tree::write_json;
-using boost::asio::ip::tcp;
-
+/* A simple server in the internet domain using TCP
+   The port number is passed as an argument 
+   This version runs forever, forking off a separate 
+   process for each connection
+*/
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h> 
 #include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <map>
-#include <ctime>
-#include <iostream>
-#include <string>
+#include <netinet/in.h>
 
-
-
-std::string make_daytime_string()
+void dostuff(int); /* function prototype */
+void error(const char *msg)
 {
-  using namespace std; // For time_t, time and ctime;
-  time_t now = time(0);
-  return ctime(&now);
+    perror(msg);
+    exit(1);
 }
 
-
-
-class tcp_connection
-  : public boost::enable_shared_from_this<tcp_connection>
+int main(int argc, char *argv[])
 {
-public:
-  typedef boost::shared_ptr<tcp_connection> pointer;
+     int sockfd, newsockfd, portno, pid;
+     socklen_t clilen;
+     struct sockaddr_in serv_addr, cli_addr;
 
-  static pointer create(boost::asio::io_service& io_service)
-  {
-    printf("Pointer created\n");
-    return pointer(new tcp_connection(io_service));
-  }
+     if (argc < 2) {
+         fprintf(stderr,"ERROR, no port provided\n");
+         exit(1);
+     }
 
-  tcp::socket& socket()
-  {
-    printf("Socket created \n");
-    return socket_;
-  }
+     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-  void start()
-  {
-    message_ = make_daytime_string();
+     if (sockfd < 0) 
+        error("ERROR opening socket");
 
-    boost::asio::async_write(socket_, boost::asio::buffer(message_),
-        boost::bind(&tcp_connection::handle_write, shared_from_this(),
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
-  }
+     bzero((char *) &serv_addr, sizeof(serv_addr));
+     portno = atoi(argv[1]);
+     serv_addr.sin_family = AF_INET;
+     serv_addr.sin_addr.s_addr = INADDR_ANY;
+     serv_addr.sin_port = htons(portno);
 
-private:
-  tcp_connection(boost::asio::io_service& io_service)
-    : socket_(io_service)
-  {
-  }
+     if (bind(sockfd, (struct sockaddr *) &serv_addr,
+              sizeof(serv_addr)) < 0) 
+              error("ERROR on binding");
+              
+     listen(sockfd,5);
+     clilen = sizeof(cli_addr);
 
-  void handle_write(const boost::system::error_code& /*error*/,
-      size_t /*bytes_transferred*/)
-  {
-  }
+     while (1) {
+         newsockfd = accept(sockfd, 
+               (struct sockaddr *) &cli_addr, &clilen);
 
-  tcp::socket socket_;
-  std::string message_;
+         if (newsockfd < 0) 
+             error("ERROR on accept");
 
-};
+         pid = fork();
 
+         if (pid < 0)
+             error("ERROR on fork");
 
+         if (pid == 0)  {
+             close(sockfd);
+             dostuff(newsockfd);
+             exit(0);
+         }
+         else 
+         {
+            close(newsockfd);
+         }
+     } /* end of while */
+     
+     close(sockfd);
+     return 0; /* we never get here */
+}
 
-
-
-class tcp_server
+/******** DOSTUFF() *********************
+ There is a separate instance of this function 
+ for each connection.  It handles all communication
+ once a connnection has been established.
+ *****************************************/
+void dostuff (int sock)
 {
-public:
-  tcp_server(boost::asio::io_service& io_service)
-    : acceptor_(io_service, tcp::endpoint(tcp::v4(), 2112))
-  {
-    printf("I am accepting connections...\n");
-    start_accept();
-  }
+   int n;
+   char buffer[256];
+      
+   bzero(buffer, 256);
+   n = read(sock, buffer, 255);
 
-private:
-  void start_accept()
-  {
-    tcp_connection::pointer new_connection =
-      tcp_connection::create(acceptor_.get_io_service());
-    printf("Connection pointer created \n");
-
-    acceptor_.async_accept(new_connection->socket(),
-        boost::bind(&tcp_server::handle_accept, this, new_connection,
-          boost::asio::placeholders::error));
-    printf("Acception createed \n");
-  }
-
-  void handle_accept(tcp_connection::pointer new_connection,
-      const boost::system::error_code& error)
-  {
-    if (!error)
-    {
-      new_connection->start();
-      start_accept();
-    }
-  }
-
-  tcp::acceptor acceptor_;
-};
-
-
-
-int main()
-{
-  try
-  {
-    boost::asio::io_service io_service;
-    tcp_server server(io_service);
-    printf("Run run\n");
-    io_service.run();
-
-    printf("Try Block\n");
-  }
-
-  catch (std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
-  }
-  return 0;
+   if (n < 0) 
+    error("ERROR reading from socket");
+   printf("Here is the message: %s\n", buffer);
+   
+   n = write(sock, "I got your message", 18);
+   if (n < 0) 
+    error("ERROR writing to socket");
 }
