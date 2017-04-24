@@ -110,7 +110,7 @@ namespace SpreadsheetGUI
             Socket socket = state.Socket;
 
             int bytesRead = socket.EndReceive(ar);
-            string theMessage = "";
+            string theMessage;
 
             if (bytesRead > 0)
             {

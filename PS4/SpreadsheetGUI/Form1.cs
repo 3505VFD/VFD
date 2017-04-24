@@ -418,6 +418,27 @@ namespace SpreadsheetGUI
         /// <param name="state"></param>
         public void ReceiveStartup(SocketState state)
         {
+            state.callMe = ReceiveFileList;
+            StaticNetworking.GetData(state);
+            spreadsheetState = state;
+
+            // Retrieve string message from state
+            Byte[] b = state.MessageBuffer;
+            string[] s = state.SB.ToString().Split('\t');
+
+            // Lock the spreadsheet while data processes
+            lock (spreadsheetState)
+            {
+                // Process startup data for requesting file from server
+                openOrCreateFile(b, s);
+            }
+            
+            // Clear the stringbuilder for the next round of messages from the server
+            state.SB.Clear();
+        }
+
+        public void ReceiveFileList(SocketState state)
+        {
             state.callMe = ReceiveInitialSpreadsheet;
             StaticNetworking.GetData(state);
             spreadsheetState = state;
@@ -483,7 +504,7 @@ namespace SpreadsheetGUI
             string[] s = state.SB.ToString().Split('\t');
             spreadsheetState = state;
 
-            lock(spreadsheetState)
+            lock (spreadsheetState)
             {
                 ProcessSpreadsheetLoad(b, s);
             }
