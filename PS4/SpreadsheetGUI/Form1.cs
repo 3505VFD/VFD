@@ -598,7 +598,6 @@ namespace SpreadsheetGUI
             networkInputTextbox.Enabled     = true;
             fileToolStripMenuItem.Enabled   = true;
             NetworkInputEnterButton.Enabled = true;
-            networkInfoTextBox1.Text = networkInfoTextBox1.Text + "Successful Connection by " + UsernameTextBox.Text + " to " + IPTextBox.Text + "\n";
         }
     }
 }
