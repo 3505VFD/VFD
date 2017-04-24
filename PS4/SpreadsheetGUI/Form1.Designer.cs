@@ -244,13 +244,13 @@
             // 
             this.IPTextBox.Location = new System.Drawing.Point(282, 2);
             this.IPTextBox.Name = "IPTextBox";
-            this.IPTextBox.Size = new System.Drawing.Size(100, 20);
+            this.IPTextBox.Size = new System.Drawing.Size(149, 20);
             this.IPTextBox.TabIndex = 12;
             this.IPTextBox.TextChanged += new System.EventHandler(this.IPTextBox_TextChanged);
             // 
             // ConnectButton
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(388, 2);
+            this.ConnectButton.Location = new System.Drawing.Point(437, 2);
             this.ConnectButton.Name = "ConnectButton";
             this.ConnectButton.Size = new System.Drawing.Size(74, 22);
             this.ConnectButton.TabIndex = 13;

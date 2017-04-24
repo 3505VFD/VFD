@@ -583,8 +583,8 @@ namespace SpreadsheetGUI
             // Send the filename to the server that the user requests
             if (networkInputTextbox.Text.Length < 1)
             {
+                networkInfoTextBox1.Text = networkInfoTextBox1.Text + "\n" + networkInputTextbox.Text;
                 StaticNetworking.Send(spreadsheetState.Socket, networkInputTextbox.Text + "\n");
-                networkInfoTextBox1.Text ="\n" + networkInputTextbox.Text;
             }
         }
 
@@ -593,9 +593,6 @@ namespace SpreadsheetGUI
         /// </summary>
         private void worker_DoWorkComplete(object sender, RunWorkerCompletedEventArgs e)
         {
-            UsernameTextBox.Enabled         = true;
-            IPTextBox.Enabled               = true;
-            ConnectButton.Enabled           = true;
             spreadsheetPanel1.Enabled       = true;
             networkInputTextbox.Enabled     = true;
             fileToolStripMenuItem.Enabled   = true;
