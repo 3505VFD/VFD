@@ -11,7 +11,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+
+#include <iostream>
+#include <fstream>
+#include <boost/unordered_map.hpp>
+#include <boost/foreach.hpp>
+
+using namespace std;
+
 void dostuff(int); /* function prototype */
+const void saveFile(string,string);
+const string readFile(string);
+const void saveFilenames(boost::unordered_map<string,string>);
+const boost::unordered_map<string,string> readFilenames();
+
 void error(const char *msg)
 {
     perror(msg);
@@ -91,7 +104,127 @@ void dostuff (int sock)
     error("ERROR reading from socket");
    printf("Here is the message: %s\n", buffer);
    
-   n = write(sock, "I got your message", 18);
-   if (n < 0) 
-    error("ERROR writing to socket");
+//   n = write(sock, "I got your message\n", 20);
+//   if (n < 0) 
+//    error("ERROR writing to socket");
+
+   typedef boost::unordered_map<string,string> map;
+   boost::unordered_map<string,string> fileNames = readFilenames();
+   
+   string files = "Send a filename from this list or a new filename\n";
+   
+   BOOST_FOREACH(map::value_type i, fileNames)
+    {      
+       files += i.first;
+       files += "\t";
+    }
+    files = files.substr(0, files.size()-1);
+    files += "\n";
+    
+    //Test for file names
+    //cout << files << endl;
+    
+    n = write(sock, files.c_str(), files.length());
+    if (n < 0) 
+         error("ERROR writing to socket");
 }
+
+
+/**************
+saving filenames and files
+*******/
+
+
+// SaveFile - saves a JSON string to a filename in .txt
+const void saveFile(string json, string filename)
+{
+  // Append the .txt to the filename.
+  filename +=".txt";
+  ofstream file(filename.c_str());
+  if (file.is_open())
+  {
+      // Write json to file.
+      file << json;
+      file.close();
+  }
+  else cout << "Unable to open file";
+}
+
+// readFile - reads a JSON string from a file and sends it.
+// NOTE: Filename needs the .txt!!!
+const string readFile(string filename)
+{
+  // Append the .txt to the filename.
+  //filename +=".txt";
+  string json;
+  ifstream file(filename.c_str());
+  if (file.is_open())
+  {
+      // Read the file for each line and puts that line into json.
+      // NOTE: If only one json is being saved to file than this can be removed.
+      while ( getline(file,json) )
+      {
+        // TEST: see if the file read the json
+        cout << json << '\n';
+      }
+      
+      file.close();
+  }
+  else cout << "Unable to open file";
+  
+  return json;
+}
+
+
+//UNORDERED MAP BOOST
+
+// saveFilenames - saves a filenames in an unordered_map to file "SpreadsheetFiles"
+const void saveFilenames(boost::unordered_map<string,string> nameOfFiles)
+{
+    typedef boost::unordered_map<string,string> map;
+    ofstream filesFind("SpreadsheetFiles.txt");
+    if (filesFind.is_open())
+    {
+        BOOST_FOREACH(map::value_type i, nameOfFiles)
+        {
+           filesFind << i.first<<"\n";
+//           std::cout<<i.first<<"\n";
+        }
+        
+        // Write json to file.
+        filesFind.close();
+    }
+    else cout << "Unable to open file";
+}
+
+
+// readFilenames - Sends a unordered_map that contains file names saved to
+// file "SpreadsheetFiles".
+const boost::unordered_map<string,string> readFilenames()
+{
+    //unordered_map<Key= filename, Value= filename.txt>
+    typedef boost::unordered_map<string,string> map;
+    map nameOfFiles;
+    string line, key;
+    
+    ifstream filesFind("SpreadsheetFiles.txt");
+    if (filesFind.is_open())
+    {
+        // Read the file for each line and puts that line into json.
+        // NOTE: If only one json is being saved to file than this can be removed.
+        while ( getline(filesFind,line) )
+        {
+          // TEST: see if the file read the json
+//          cout << line << '\n';
+          key = line;
+          line += ".txt";
+          nameOfFiles[key] = line;
+        }
+      
+        filesFind.close();
+    }
+    else cout << "Unable to open file";
+    
+    return nameOfFiles;
+}
+
