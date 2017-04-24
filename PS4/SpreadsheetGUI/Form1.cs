@@ -463,7 +463,8 @@ namespace SpreadsheetGUI
                 if (networkInfoTextBox1.InvokeRequired)
                 {
                     StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(openOrCreateFile);
-                    Invoke(d, new object[] { networkInfoTextBox1.Text + s[i] + "\n" });
+                    string[] arr = {networkInfoTextBox1.Text + s[i] + "\n"};
+                    Invoke(d, new object[] {b, arr});
                 }
                 else
                     networkInfoTextBox1.Text = networkInfoTextBox1.Text + s[i] + "\n";
