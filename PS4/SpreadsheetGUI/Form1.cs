@@ -418,7 +418,7 @@ namespace SpreadsheetGUI
         /// <param name="state"></param>
         public void ReceiveStartup(SocketState state)
         {
-            state.callMe = ReceiveFileList;
+            state.callMe = ReceiveInitialSpreadsheet;
             StaticNetworking.GetData(state);
             spreadsheetState = state;
 
@@ -436,28 +436,7 @@ namespace SpreadsheetGUI
             // Clear the stringbuilder for the next round of messages from the server
             state.SB.Clear();
         }
-
-        public void ReceiveFileList(SocketState state)
-        {
-            state.callMe = ReceiveInitialSpreadsheet;
-            StaticNetworking.GetData(state);
-            spreadsheetState = state;
-
-            // Retrieve string message from state
-            Byte[] b = state.MessageBuffer;
-            string[] s = state.SB.ToString().Split('\t');
-
-            // Lock the spreadsheet while data processes
-            lock (spreadsheetState)
-            {
-                // Process startup data for requesting file from server
-                openOrCreateFile(b, s);
-            }
-
-            // Clear the stringbuilder for the next round of messages from the server
-            state.SB.Clear();
-        }
-
+        
         private void openOrCreateFile(Byte[] b, string[] s)
         {
             /*
@@ -484,7 +463,7 @@ namespace SpreadsheetGUI
                 if (networkInfoTextBox1.InvokeRequired)
                 {
                     StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(openOrCreateFile);
-                    string[] arr = {networkInfoTextBox1.Text + s[i] + "\n"};
+                    string[] arr = {s[i] + "\n"};
                     Invoke(d, new object[] {b, arr});
                 }
                 else
@@ -603,7 +582,7 @@ namespace SpreadsheetGUI
         private void InputEnterButton_Click(object sender, EventArgs e)
         {
             // Send the filename to the server that the user requests
-            if (networkInputTextbox.Text.Length < 1)
+            if (networkInputTextbox.Text.Length > 1)
             {
                 networkInfoTextBox1.Text = networkInfoTextBox1.Text + "\n" + networkInputTextbox.Text;
                 StaticNetworking.Send(spreadsheetState.Socket, networkInputTextbox.Text + "\n");
