@@ -1,8 +1,8 @@
-/* A simple server in the internet domain using TCP
-   The port number is passed as an argument 
-   This version runs forever, forking off a separate 
-   process for each connection
-*/
+/*
+ * Referenced chunks of code from:
+ * http://www.linuxhowtos.org/C_C++/socket.htm
+ * http://code.runnable.com/VXjZZimG7Nk0smWF/simple-tcp-server-code-for-c%2B%2B-and-socket
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -19,7 +19,11 @@
 
 using namespace std;
 
-void dostuff(int); /* function prototype */
+/*
+ * Function forward declarations
+ */
+void dostuff(int); 
+
 const void saveFile(string,string);
 const string readFile(string);
 const void saveFilenames(boost::unordered_map<string,string>);
@@ -31,6 +35,11 @@ void error(const char *msg)
     exit(1);
 }
 
+/*
+ * MAIN
+ */
+
+ // Begin Skylar's server patchwork
 int main(int argc, char *argv[])
 {
      int sockfd, newsockfd, portno, pid;
@@ -44,34 +53,22 @@ int main(int argc, char *argv[])
 
      sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-     if (sockfd < 0) 
-        error("ERROR opening socket");
-
      bzero((char *) &serv_addr, sizeof(serv_addr));
      portno = atoi(argv[1]);
+
      serv_addr.sin_family = AF_INET;
      serv_addr.sin_addr.s_addr = INADDR_ANY;
      serv_addr.sin_port = htons(portno);
 
-     if (bind(sockfd, (struct sockaddr *) &serv_addr,
-              sizeof(serv_addr)) < 0) 
-              error("ERROR on binding");
+     bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
               
      listen(sockfd,5);
      clilen = sizeof(cli_addr);
 
-     while (1) {
-         newsockfd = accept(sockfd, 
-               (struct sockaddr *) &cli_addr, &clilen);
-
-         if (newsockfd < 0) 
-             error("ERROR on accept");
+     while (true) {
+         newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 
          pid = fork();
-
-         if (pid < 0)
-             error("ERROR on fork");
-
          if (pid == 0)  {
              close(sockfd);
              dostuff(newsockfd);
@@ -81,17 +78,16 @@ int main(int argc, char *argv[])
          {
             close(newsockfd);
          }
-     } /* end of while */
+     } 
      
      close(sockfd);
-     return 0; /* we never get here */
+     return 0; 
 }
 
-/******** DOSTUFF() *********************
- There is a separate instance of this function 
- for each connection.  It handles all communication
- once a connnection has been established.
- *****************************************/
+/*
+ * Split this into more functions (send, receive, etc.)
+ * Rachel and Skylar both worked/tested this section
+ */
 void dostuff (int sock)
 {
    int n;
@@ -100,15 +96,7 @@ void dostuff (int sock)
    bzero(buffer, 256);
    n = read(sock, buffer, 255);
 
-   if (n < 0) 
-    error("ERROR reading from socket");
-   printf("Here is the message: %s\n", buffer);
-   
-  
-   
-//   n = write(sock, "I got your message\n", 20);
-//   if (n < 0) 
-//    error("ERROR writing to socket");
+   printf("Hello, %s\n", buffer);
 
    typedef boost::unordered_map<string,string> map;
    boost::unordered_map<string,string> fileNames = readFilenames();
@@ -123,43 +111,30 @@ void dostuff (int sock)
     files = files.substr(0, files.size()-1);
     files += "\n";
     
-    //Test for file names
-    //cout << files << endl;
-    
-    //send file names
-    n = 0;
-    
+    // send file names
     n = write(sock, files.c_str(), 255);
-    if (n < 0) 
-         error("ERROR writing to socket");
     
-    //set buffer to zero     
+    // reset buffer to zero     
     bzero(buffer, 256);
     n = read(sock, buffer, 255);
-    
     string filename = buffer;
     filename = filename.substr(0, filename.size()-1);
     
-    //Test if recive
+    // Test if recieve
     cout << filename << endl;
     
-    if (fileNames.find(filename) == fileNames.end())
-    {
-        //do shit about new one.
-    }
-    
-    
+    // attempt to send json
     string json = readFile(filename);
     n = write(sock, json.c_str(), 255);
-    if (n < 0) 
-         error("ERROR writing to socket");
 }
 
 
-/**************
-saving filenames and files
-*******/
+/***************************
+ saving filenames and files
+****************************/
 
+// EVERYTHING BELOW IS RACHEL'S WORK
+// Skylar tested the living daylights out of the buffers
 
 // SaveFile - saves a JSON string to a filename in .txt
 const void saveFile(string json, string filename)
@@ -177,7 +152,6 @@ const void saveFile(string json, string filename)
 }
 
 // readFile - reads a JSON string from a file and sends it.
-// NOTE: Filename needs the .txt!!!
 const string readFile(string filename)
 {
   // Append the .txt to the filename.
@@ -214,9 +188,7 @@ const void saveFilenames(boost::unordered_map<string,string> nameOfFiles)
         BOOST_FOREACH(map::value_type i, nameOfFiles)
         {
            filesFind << i.first<<"\n";
-//           std::cout<<i.first<<"\n";
         }
-        
         // Write json to file.
         filesFind.close();
     }
@@ -241,7 +213,6 @@ const boost::unordered_map<string,string> readFilenames()
         while ( getline(filesFind,line) )
         {
           // TEST: see if the file read the json
-//          cout << line << '\n';
           key = line;
           line += ".txt";
           nameOfFiles[key] = line;
