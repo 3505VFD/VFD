@@ -120,6 +120,7 @@ namespace SpreadsheetGUI
                 {
                     state.SB.Append(theMessage);
                     state.callMe(state);
+                    state.SB.Clear();
                 }
                 else
                 {

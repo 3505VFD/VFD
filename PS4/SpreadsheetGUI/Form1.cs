@@ -470,7 +470,6 @@ namespace SpreadsheetGUI
                     networkInfoTextBox1.Text = networkInfoTextBox1.Text + s[i] + "\n";
             }
 
-            
         }
 
         /// <summary>
@@ -480,7 +479,7 @@ namespace SpreadsheetGUI
         public void ReceiveInitialSpreadsheet(SocketState state)
         {
             Byte[] b = state.MessageBuffer;
-            string[] s = state.SB.ToString().Split('\t');
+            string[] s = state.SB.ToString().Split('\n');
             spreadsheetState = state;
 
             lock (spreadsheetState)
@@ -498,19 +497,32 @@ namespace SpreadsheetGUI
             MemoryStream stream = new MemoryStream(b);
             StreamReader reader = new StreamReader(stream);
             Dictionary<string, string> spreadsheetData = new Dictionary<string, string>();
-
+            string[] str;
             // Begin reading the data stream
             using (reader)
             {
                 try
                 {
                     // Get the json data for the whole spreadsheet file
-                    string jsonString = reader.ReadToEnd();
+                    string jsonString = reader.ReadLine();
+                    //int begin = jsonString.IndexOf('0');
+                    int end = jsonString.IndexOf('}');
+                    string actual = jsonString.Substring(2, end);
+                    string[] bits = actual.Split(',');
+                    string[] cells;
+                    string cellName;
+                    string contents;
+                    foreach (string cell in bits)
+                    {
+                        cells = cell.Split(':');
 
-                    // Deserialize the json string into a Dictionary
-                    spreadsheetData = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
+                        cellName = cells[0].Replace('\"', ' ').Trim();
+                        contents = cells[1].Replace('\"', ' ').Trim();
+
+                        ss.SetContentsOfCell(cellName, contents);
+                    }
                 }
-                catch (JsonReaderException)
+                catch (Exception)
                 {}
             }
 
