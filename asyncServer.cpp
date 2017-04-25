@@ -104,6 +104,8 @@ void dostuff (int sock)
     error("ERROR reading from socket");
    printf("Here is the message: %s\n", buffer);
    
+  
+   
 //   n = write(sock, "I got your message\n", 20);
 //   if (n < 0) 
 //    error("ERROR writing to socket");
@@ -111,7 +113,7 @@ void dostuff (int sock)
    typedef boost::unordered_map<string,string> map;
    boost::unordered_map<string,string> fileNames = readFilenames();
    
-   string files = "Send a filename from this list or a new filename\n";
+   string files = "Send a filename from this list or a new filename: ";
    
    BOOST_FOREACH(map::value_type i, fileNames)
     {      
@@ -124,7 +126,31 @@ void dostuff (int sock)
     //Test for file names
     //cout << files << endl;
     
-    n = write(sock, files.c_str(), files.length());
+    //send file names
+    n = 0;
+    
+    n = write(sock, files.c_str(), 255);
+    if (n < 0) 
+         error("ERROR writing to socket");
+    
+    //set buffer to zero     
+    bzero(buffer, 256);
+    n = read(sock, buffer, 255);
+    
+    string filename = buffer;
+    filename = filename.substr(0, filename.size()-1);
+    
+    //Test if recive
+    cout << filename << endl;
+    
+    if (fileNames.find(filename) == fileNames.end())
+    {
+        //do shit about new one.
+    }
+    
+    
+    string json = readFile(filename);
+    n = write(sock, json.c_str(), 255);
     if (n < 0) 
          error("ERROR writing to socket");
 }
@@ -155,7 +181,7 @@ const void saveFile(string json, string filename)
 const string readFile(string filename)
 {
   // Append the .txt to the filename.
-  //filename +=".txt";
+  filename +=".txt";
   string json;
   ifstream file(filename.c_str());
   if (file.is_open())
@@ -165,7 +191,7 @@ const string readFile(string filename)
       while ( getline(file,json) )
       {
         // TEST: see if the file read the json
-        cout << json << '\n';
+        //cout << json << '\n';
       }
       
       file.close();
